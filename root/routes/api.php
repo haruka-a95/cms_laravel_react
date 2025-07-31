@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CompanyCategoryController;
+use App\Http\Controllers\PersonController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,3 +26,4 @@ use App\Http\Controllers\CompanyCategoryController;
 
 Route::apiResource('clients', ClientController::class);
 Route::apiResource('company_categories', CompanyCategoryController::class);
+Route::apiResource('persons', PersonController::class);

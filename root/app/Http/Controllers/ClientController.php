@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Client;
+use App\Models\ClientCompanyCategory;
+use Illuminate\Support\Facades\DB;
 
 class ClientController extends Controller
 {
@@ -14,7 +16,7 @@ class ClientController extends Controller
      */
     public function index()
     {
-        return Client::paginate(20);
+        return Client::with(['categories', 'persons'])->paginate(30);;
     }
 
     /**
@@ -31,9 +33,41 @@ class ClientController extends Controller
         'phone' => ['nullable', 'regex:/^\+?[0-9\- ]{7,15}$/'],
         'email' => 'nullable|email',
         'address' => 'nullable|string|max:255',
+        'company_category_ids' => 'array',
+        'company_category_ids.*' => 'exists:company_categories,id',
         ]);
 
-        return Client::create($validated);
+        DB::beginTransaction();
+        try{
+            // クライアント作成
+            $client = Client::create([
+                'company_name'      => $validated['company_name'],
+                'phone'             => $validated['phone'] ?? null,
+                'email'             => $validated['email'] ?? null,
+                'address'           => $validated['address'] ?? null,
+                'contact_person_id' => $validated['contact_person_id'] ?? null,
+            ]);
+
+            //中間テーブルにカテゴリ関連付け
+            if (!empty($validated['company_category_ids'])) {
+                $client->categories()->sync($validated['company_category_ids']);
+            } else {
+                $client->categories()->sync([]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'クライアントを追加しました。',
+                'data' => $client->load(['persons', 'categories']),
+            ], 201);
+        } catch (\Exception $e){
+            DB::rollBack();
+            return response()->json([
+                'message' => '登録中のエラー',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -42,9 +76,10 @@ class ClientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Client $client)
+    public function show($id)
     {
-        return $client;
+        $client = Client::with(['categories', 'persons'])->findOrFail($id);
+        return response()->json($client);
     }
 
     /**
@@ -63,9 +98,38 @@ class ClientController extends Controller
             'phone' => ['nullable', 'regex:/^\+?[0-9\- ]{7,15}$/'],
             'email' => 'nullable|email',
             'address' => 'nullable|string|max:255',
+            'company_category_ids' => 'array',
+            'company_category_ids.*' => 'exists:company_categories,id',
         ]);
-        $client->update($validated);
-        return $client;
+
+        DB::beginTransaction();
+        try{
+            $client->update([
+                'company_name'      => $validated['company_name'],
+                'phone'             => $validated['phone'] ?? null,
+                'email'             => $validated['email'] ?? null,
+                'address'           => $validated['address'] ?? null,
+                'contact_person_id' => $validated['contact_person_id'] ?? null,
+            ]);
+
+            //中間テーブルの更新
+            $client->categories()->sync($validated['company_category_ids'] ?? []);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'クライアントを編集しました。',
+                'data' => $client->load(['persons', 'categories']),
+            ], 200);
+
+        } catch (\Exception $e){
+            DB::rollBack();
+
+            return response()->json([
+                'message' => '更新中のエラー',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**

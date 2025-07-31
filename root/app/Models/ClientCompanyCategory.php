@@ -9,7 +9,10 @@ class ClientCompanyCategory extends Model
 {
     use HasFactory;
 
+    protected $table = 'client_company_category';
+
     protected $fillable = [
-        'name',
+        'client_id',
+        'company_category_id',
     ];
 }

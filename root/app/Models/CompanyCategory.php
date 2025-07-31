@@ -12,4 +12,10 @@ class CompanyCategory extends Model
     protected $fillable = [
         'name',
     ];
+
+    public function clients()
+    {
+        return $this->belongsToMany(Client::class, 'client_company_category', 'company_category_id', 'client_id');
+    }
+
 }

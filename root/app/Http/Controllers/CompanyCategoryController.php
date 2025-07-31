@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CompanyCategory;
+use Exception;
 
 class CompanyCategoryController extends Controller
 {
@@ -29,7 +30,17 @@ class CompanyCategoryController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
-        return CompanyCategory::create($validated);
+        try {
+            $companyCategory = CompanyCategory::create($validated);
+            return response()->json([
+                'message' => '新規カテゴリを追加しました。',
+                'data' => $companyCategory,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => '処理中にエラーが発生しました。',
+            ], 500);
+        }
     }
 
     /**
@@ -55,8 +66,17 @@ class CompanyCategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
         ]);
-        $companyCategory->update($validated);
-        return $companyCategory;
+        try {
+            $companyCategory = CompanyCategory::update($validated);
+            return response()->json([
+                'message' => 'カテゴリを編集しました。',
+                'data' => $companyCategory,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => '処理中にエラーが発生しました。',
+            ], 500);
+        }
     }
 
     /**
@@ -67,7 +87,16 @@ class CompanyCategoryController extends Controller
      */
     public function destroy(CompanyCategory $companyCategory)
     {
-        $companyCategory->delete();
-        return response()->noContent();
+        try {
+            $companyCategory->delete();
+            return response()->json([
+                'message' => 'カテゴリを削除しました。',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => '削除に失敗しました。',
+            ], 500);
+        }
     }
+
 }
