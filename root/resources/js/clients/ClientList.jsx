@@ -17,6 +17,7 @@ function ClientList({ clients, onEdit, onDelete }) {
                         <th>メール</th>
                         <th>住所</th>
                         <th>操作</th>
+                        <th>ステータス</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,6 +39,7 @@ function ClientList({ clients, onEdit, onDelete }) {
                                 <button onClick={() => onEdit(c)}>編集</button>
                                 <button onClick={() => onDelete(c.id)}>削除</button>
                             </td>
+                            <td>{c.status_label}</td>
                         </tr>
                     ))}
                 </tbody>

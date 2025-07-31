@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Enums\ClientStatus;
 
 class Client extends Model
 {
@@ -15,7 +16,11 @@ class Client extends Model
         'phone',
         'email',
         'address',
+        'status',
     ];
+
+    // ステータスラベルをレスポンスに含める
+    protected $appends = ['status_label'];
 
     public function persons()
     {
@@ -30,5 +35,11 @@ class Client extends Model
     public function primaryPerson()
     {
         return $this->hasOne(Person::class)->where('is_primary', true);
+    }
+
+    //ステータス表示用
+    public function getStatusLabelAttribute()
+    {
+        return ClientStatus::labels()[$this->status] ?? $this->status;
     }
 }

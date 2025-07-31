@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-function ClientForm({ onSubmit, editingClient }) {
+const STATUS_OPTIONS = [
+    { value: 'prospect', label: '見込み' },
+    { value: 'active', label: '取引中'},
+    { value: 'suspended', label: '停止'},
+    { value: 'closed', label: '取引終了'},
+];
+
+export default function  ClientForm({ onSubmit, editingClient }) {
     const [form, setForm] = useState({
         company_name: "",
         phone: "",
@@ -9,6 +16,7 @@ function ClientForm({ onSubmit, editingClient }) {
         address: "",
         contact_person_id: "",
         company_category_ids:[],
+        status:"prospect",//初期ステータスは見込み
     });
 
     const [persons, setPersons] = useState([]);
@@ -19,7 +27,8 @@ function ClientForm({ onSubmit, editingClient }) {
         if (editingClient) {
             setForm({
                 ...editingClient,
-                company_category_ids: editingClient.company_category_ids?.map(c => c.id) || [],
+                company_category_ids: editingClient.categories ? editingClient.categories.map(c => c.id) : [],
+                status: editingClient.status ?? "prospect",
             });
         } else {
             setForm({
@@ -29,6 +38,7 @@ function ClientForm({ onSubmit, editingClient }) {
                 address: "",
                 contact_person_id: "",
                 company_category_ids: [],
+                status: "prospect",
             });
         }
     }, [editingClient]);
@@ -58,6 +68,18 @@ function ClientForm({ onSubmit, editingClient }) {
     return (
         <form onSubmit={handleSubmit}>
             <h2>{editingClient ? "クライアント編集" : "新規クライアント追加"}</h2>
+            {/* ステータス選択 */}
+            <select
+                name="status"
+                value={form.status}
+                onChange={handleChange}
+            >
+                {STATUS_OPTIONS.map(opt => (
+                    <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                    </option>
+                ))}
+            </select>
             {/* 企業カテゴリ選択 */}
             <select name="company_category_ids" multiple value={form.company_category_ids || []}
                 onChange={(e)=> setForm({
@@ -105,5 +127,3 @@ function ClientForm({ onSubmit, editingClient }) {
         </form>
     );
 }
-
-export default ClientForm;

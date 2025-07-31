@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Client;
 use App\Models\ClientCompanyCategory;
 use Illuminate\Support\Facades\DB;
+use App\Enums\ClientStatus;
 
 class ClientController extends Controller
 {
@@ -35,6 +36,7 @@ class ClientController extends Controller
         'address' => 'nullable|string|max:255',
         'company_category_ids' => 'array',
         'company_category_ids.*' => 'exists:company_categories,id',
+        'status' => 'required|in:' . implode(',',  ClientStatus::all()),
         ]);
 
         DB::beginTransaction();
@@ -46,6 +48,7 @@ class ClientController extends Controller
                 'email'             => $validated['email'] ?? null,
                 'address'           => $validated['address'] ?? null,
                 'contact_person_id' => $validated['contact_person_id'] ?? null,
+                'status'            => $validated['status'],
             ]);
 
             //中間テーブルにカテゴリ関連付け
@@ -56,6 +59,9 @@ class ClientController extends Controller
             }
 
             DB::commit();
+
+            // ステータスラベルフィールドをモデルに付与
+            $client->status_label = $client->status_label;
 
             return response()->json([
                 'message' => 'クライアントを追加しました。',
@@ -100,6 +106,7 @@ class ClientController extends Controller
             'address' => 'nullable|string|max:255',
             'company_category_ids' => 'array',
             'company_category_ids.*' => 'exists:company_categories,id',
+            'status' => 'required|in:' . implode(',', ClientStatus::all()),
         ]);
 
         DB::beginTransaction();
@@ -110,12 +117,16 @@ class ClientController extends Controller
                 'email'             => $validated['email'] ?? null,
                 'address'           => $validated['address'] ?? null,
                 'contact_person_id' => $validated['contact_person_id'] ?? null,
+                'status'            => $validated['status'],
             ]);
 
             //中間テーブルの更新
             $client->categories()->sync($validated['company_category_ids'] ?? []);
 
             DB::commit();
+
+            // ステータスラベルフィールドを単一モデルに付与
+            $client->status_label = $client->status_label;
 
             return response()->json([
                 'message' => 'クライアントを編集しました。',
