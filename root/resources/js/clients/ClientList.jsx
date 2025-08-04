@@ -21,27 +21,29 @@ function ClientList({ clients, onEdit, onDelete }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {clients.map((c) => (
-                        <tr key={c.id}>
-                            <td>{c.id}</td>
-                            <td>
-                                {c.categories && c.categories.length > 0
-                                ? c.categories.map(cat => cat.name).join(', ')
-                                : '-'}
-                            </td>
-                            <td><Link to={`/clients/${c.id}`}>{c.company_name}</Link></td>
-                            <td>{c.persons && c.persons.length > 0
-                                 ? (c.persons.find(person => person.is_primary) || {name: '-'}).name : '-'}</td>
-                            <td>{c.phone}</td>
-                            <td>{c.email}</td>
-                            <td>{c.address}</td>
-                            <td>
-                                <button onClick={() => onEdit(c)}>編集</button>
-                                <button onClick={() => onDelete(c.id)}>削除</button>
-                            </td>
-                            <td>{c.status_label}</td>
-                        </tr>
-                    ))}
+                    {Array.isArray(clients) && clients.length > 0 ? (
+                        clients.map((c) => (
+                            <tr key={c.id}>
+                                <td>{c.id}</td>
+                                <td>
+                                    {c.categories && c.categories.length > 0
+                                    ? c.categories.map(cat => cat.name).join(', ')
+                                    : '-'}
+                                </td>
+                                <td><Link to={`/clients/${c.id}`}>{c.company_name}</Link></td>
+                                <td>{c.persons && c.persons.length > 0
+                                    ? (c.persons.find(person => person.is_primary) || {name: '-'}).name : '-'}</td>
+                                <td>{c.phone}</td>
+                                <td>{c.email}</td>
+                                <td>{c.address}</td>
+                                <td>
+                                    <button onClick={() => onEdit(c)}>編集</button>
+                                    <button onClick={() => onDelete(c.id)}>削除</button>
+                                </td>
+                                <td>{c.status_label}</td>
+                            </tr>
+                        ))
+                    ) : (<tr><td colSpan="9">データがありません。</td></tr>)}
                 </tbody>
             </table>
         </div>

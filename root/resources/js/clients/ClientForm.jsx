@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import SelectField from "../components/forms/SelectFiled";
+import MultiSelectField from "../components/forms/MultiSelectFiled";
+import InputField from "../components/forms/InputField";
+import Button from "../components/Button";
 
 const STATUS_OPTIONS = [
     { value: 'prospect', label: '見込み' },
@@ -21,6 +25,7 @@ export default function  ClientForm({ onSubmit, editingClient }) {
 
     const [persons, setPersons] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [zipcode, setZipcode] = useState("");
 
     //フォーム初期化
     useEffect(() => {
@@ -59,6 +64,26 @@ export default function  ClientForm({ onSubmit, editingClient }) {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
+    // 郵便番号検索
+    const handleZipSearch = async () => {
+        if (!zipcode) return;
+        try {
+            const res = await axios.get("https://zipcloud.ibsnet.co.jp/api/search", {params: {zipcode}});
+
+            if (res.data.results) {
+                const data = res.data.results[0];
+                setForm({
+                    ...form,
+                    address: `${data.address1}${data.address2}${data.address3}`
+                });
+            } else {
+                alert("住所が見つかりません。");
+            }
+        } catch (error) {
+            console.error("郵便番号検索エラー");
+        }
+    };
+
     //保存
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -68,62 +93,74 @@ export default function  ClientForm({ onSubmit, editingClient }) {
     return (
         <form onSubmit={handleSubmit}>
             <h2>{editingClient ? "クライアント編集" : "新規クライアント追加"}</h2>
+
             {/* ステータス選択 */}
-            <select
+            <SelectField
+                label="ステータス"
                 name="status"
                 value={form.status}
+                options={STATUS_OPTIONS}
                 onChange={handleChange}
-            >
-                {STATUS_OPTIONS.map(opt => (
-                    <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                    </option>
-                ))}
-            </select>
+            />
             {/* 企業カテゴリ選択 */}
-            <select name="company_category_ids" multiple value={form.company_category_ids || []}
-                onChange={(e)=> setForm({
-                ...form,
-                company_category_ids: Array.from(e.target.selectedOptions, option => Number(option.value))
-            })}>
-                <option disabled>企業カテゴリを選択</option>
-                {categories.map( c =>(
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-            </select>
-            <input
+            <MultiSelectField
+                label="企業カテゴリ"
+                name="company_category_ids"
+                values={form.company_category_ids}
+                options={categories.map(c => ({ value: c.id, label: c.name }))}
+                onChange={(values) => setForm({ ...form, company_category_ids: values })}
+            />
+            {/* 企業名 */}
+            <InputField
+                label="企業名"
                 name="company_name"
                 value={form.company_name}
                 onChange={handleChange}
-                placeholder="会社名"
+                placeholder="企業名を入力"
                 required
             />
             {/* 担当者選択 */}
-            <select name="contact_person_id" value={form.contact_person_id} onChange={handleChange}>
-                <option value="">担当者を選択</option>
-                {persons.map(p=>(
-                    <option key={p.id} value={p.id}>{p.name}</option>
-                ))}
-            </select>
-            <input
+            <SelectField
+                label="担当者"
+                name="contact_person_id"
+                value={form.contact_person_id}
+                options={persons.map(p => ({ value: p.id, label: p.name }))}
+                onChange={handleChange}
+                placeholder="担当者を選択"
+            />
+            {/* TEL */}
+            <InputField
+                label="電話番号"
                 name="phone"
                 value={form.phone}
                 onChange={handleChange}
                 placeholder="代表電話番号"
             />
-            <input
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                placeholder="メールアドレス"
+            {/* メアド */}
+            <InputField
+                            label="メールアドレス"
+                            name="email"
+                            value={form.email}
+                            onChange={handleChange}
+                            placeholder="メールアドレス"
             />
-            <input
+            {/* 住所 */}
+            {/* 郵便番号 */}
+            <InputField label="郵便番号"
+                        name="zipcode"
+                        value={zipcode}
+                        onChange={(e) => setZipcode(e.target.value)}
+                        placeholder="例: 1000001" />
+            <Button variant="secondary" type="button" onClick={handleZipSearch}>住所検索</Button>
+            <InputField
+                label="住所"
                 name="address"
                 value={form.address}
                 onChange={handleChange}
                 placeholder="住所"
             />
-            <button type="submit">{editingClient ? "更新" : "追加"}</button>
+
+            <Button variant="primary" type="submit">{editingClient ? "更新" : "追加"}</Button>
         </form>
     );
 }

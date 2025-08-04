@@ -15,7 +15,7 @@ class CompanyCategoryController extends Controller
      */
     public function index()
     {
-        return CompanyCategory::paginate(30);
+        return response()->json(CompanyCategory::all());
     }
 
     /**
@@ -67,7 +67,7 @@ class CompanyCategoryController extends Controller
             'name' => 'required|string|max:255',
         ]);
         try {
-            $companyCategory = CompanyCategory::update($validated);
+            $companyCategory->update($validated);
             return response()->json([
                 'message' => 'カテゴリを編集しました。',
                 'data' => $companyCategory,

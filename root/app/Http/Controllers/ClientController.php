@@ -15,9 +15,42 @@ class ClientController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Client::with(['categories', 'persons'])->paginate(30);;
+        $query = Client::query()->with(['categories', 'persons']);
+
+        //ステータスで検索（複数指定可能、配列で受け取り）
+        if ($request->filled('status')) {
+            $statuses = is_array($request->status) ? $request->status : explode(',', $request->status);
+            $query->whereIn('status', $statuses);
+        }
+
+        //企業カテゴリで検索（複数指定可、配列で受け取り）
+        if ($request->filled('company_category_ids')) {
+            $categoryIds = is_array($request->company_category_ids) ? $request->company_category_ids : explode(',', $request->company_category_ids);
+
+            $query->whereHas('categories', function($q) use ($categoryIds) {
+                $q->whereIn('company_category_id', $categoryIds);
+            });
+        }
+
+        //企業名部分一致
+        if ($request->filled('company_name')) {
+            $companyName = $request->company_name;
+            $query->where('company_name', 'like', "%{$companyName}%");
+        }
+
+        //担当者名部分一致
+        if ($request->filled('person_name')) {
+            $personName = $request->person_name;
+            $query->whereHas('persons', function($q) use ($personName){
+                $q->where('name', 'like', "%{$personName}%");
+            });
+        }
+
+        //ページネーション
+        $perPage = $request->get('per_page', 30);
+        return $query->paginate($perPage);
     }
 
     /**

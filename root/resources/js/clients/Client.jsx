@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ClientForm from "./ClientForm";
 import ClientList from "./ClientList";
+import ClientSearch from "./ClientSearch";
 
 function Client() {
     const [clients, setClients] = useState([]);
@@ -14,6 +15,7 @@ function Client() {
         fetchClients();
     }, []);
 
+    //全件取得
     const fetchClients = async () => {
         setLoading(true);
         try {
@@ -25,6 +27,18 @@ function Client() {
             setLoading(false);
         }
     };
+    //検索
+    const handleSearchResults = (results) => {
+        //配列かどうか確認
+        if (Array.isArray(results)) {
+            setClients(results);
+        } else if (results?.data && Array.isArray(results.data)) {
+            setClients(results.data);
+        } else {
+            setClients([]);
+        }
+        // console.log('client.jsx結果：', results);
+    }
 
     const handleSave = async (client) => {
         try {
@@ -60,11 +74,14 @@ function Client() {
             <h1>クライアント管理</h1>
             {message && <div style={{ color: "green" }}>{message}</div>}
             {error && <div style={{ color: "red" }}>{error}</div>}
-
+            {/* 追加フォーム */}
             <ClientForm
                 onSubmit={handleSave}
                 editingClient={editingClient}
             />
+            {/* 検索フォーム */}
+            <ClientSearch onResults={handleSearchResults}/>
+            {/* 一覧 */}
             <ClientList
                 clients={clients}
                 onEdit={setEditingClient}

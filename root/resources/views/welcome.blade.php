@@ -7,6 +7,6 @@
       @vite(['resources/css/app.css', 'resources/js/app.jsx',])
 </head>
 <body>
-    <div id="app"></div>
+    <div id="app" class="m-5"></div>
 </body>
 </html>
