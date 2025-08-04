@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreClientCompanyCategoryRequest;
 use Illuminate\Http\Request;
 use App\Models\ClientCompanyCategory;
+use App\Services\ClientCompanyCategoryService;
 
 class ClientCompanyCategoryController extends Controller
 {
+    protected $service;
+
+    public function __construct(ClientCompanyCategoryService $service)
+    {
+        $this->service = $service;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -23,14 +32,9 @@ class ClientCompanyCategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreClientCompanyCategoryRequest $request)
     {
-        $validated = $request->validate([
-            'client_id' => 'required|integer|exists:clients,id',
-            'company_category_id' => 'nullable|integer|exists:company_categories,id',
-        ]);
-
-        return ClientCompanyCategory::create($validated);
+        return $this->service->create($request->validated());
     }
 
     /**
@@ -51,15 +55,10 @@ class ClientCompanyCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, ClientCompanyCategory $clientCate)
+    public function update(StoreClientCompanyCategoryRequest $request, ClientCompanyCategory $clientCate)
     {
-        $validated = $request->validate([
-            'client_id' => 'required|integer|exists:clients,id',
-            'company_category_id' => 'nullable|integer|exists:company_categories,id',
-        ]);
-
-        $clientCate->update($validated);
-        return $clientCate;
+        $updated = $this->service->update($clientCate, $request->validated());
+        return $updated;
     }
 
     /**
@@ -70,7 +69,7 @@ class ClientCompanyCategoryController extends Controller
      */
     public function destroy(ClientCompanyCategory $clientCate)
     {
-        $clientCate->delete();
+        $this->service->delete($clientCate);
         return response()->noContent();
     }
 }

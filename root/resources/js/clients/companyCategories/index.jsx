@@ -26,8 +26,9 @@ function CompanyCategory() {
         setError(null);
         try {
             const res = await axios.get("/api/company_categories");
-            setCategories(res.data.data);
+            setCategories(res.data.data || res.data);
         } catch (err) {
+            console.error("カテゴリ取得エラー:", err);
             setError("カテゴリの取得に失敗しました");
         } finally {
             setLoading(false);
@@ -66,6 +67,7 @@ function CompanyCategory() {
     };
 
     if (loading) return <p>カテゴリを読み込み中...</p>;
+    if (error) return <p style={{color:"red"}}>{error}</p>;
 
     return (
         <div>
