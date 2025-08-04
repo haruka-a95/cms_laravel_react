@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\ClientCompanyCategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CompanyCategoryController;
 use App\Http\Controllers\PersonController;
+use App\Models\ClientCompanyCategory;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,4 +28,5 @@ use App\Http\Controllers\PersonController;
 
 Route::apiResource('clients', ClientController::class);
 Route::apiResource('company_categories', CompanyCategoryController::class);
+Route::apiResource('client_company_categories', ClientCompanyCategoryController::class);
 Route::apiResource('persons', PersonController::class);

@@ -17,8 +17,8 @@ class ClientCompanyCategoryService
         return $model;
     }
 
-    public function delete(ClientCompanyCategory $model): bool
+    public function delete(ClientCompanyCategory $clientCate): bool
     {
-        return $model->delete();
+        return (bool) $clientCate->delete();
     }
 }

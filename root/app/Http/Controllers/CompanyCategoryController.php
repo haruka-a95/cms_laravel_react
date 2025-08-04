@@ -15,7 +15,8 @@ class CompanyCategoryController extends Controller
      */
     public function index()
     {
-        return response()->json(CompanyCategory::all());
+        $categories = CompanyCategory::paginate(30);
+        return response()->json($categories);
     }
 
     /**

@@ -34,7 +34,8 @@ class ClientCompanyCategoryController extends Controller
      */
     public function store(StoreClientCompanyCategoryRequest $request)
     {
-        return $this->service->create($request->validated());
+        $created = $this->service->create($request->validated());
+        return response()->json($created, 201);
     }
 
     /**
@@ -43,9 +44,9 @@ class ClientCompanyCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(ClientCompanyCategory $clientCate)
+    public function show(ClientCompanyCategory $client_company_category)
     {
-        return $clientCate;
+        return response()->json($client_company_category, 200);
     }
 
     /**
@@ -55,10 +56,10 @@ class ClientCompanyCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreClientCompanyCategoryRequest $request, ClientCompanyCategory $clientCate)
+    public function update(StoreClientCompanyCategoryRequest $request, ClientCompanyCategory $client_company_category)
     {
-        $updated = $this->service->update($clientCate, $request->validated());
-        return $updated;
+        $updated = $this->service->update($client_company_category, $request->validated());
+        return response()->json($updated, 200);
     }
 
     /**
@@ -67,9 +68,9 @@ class ClientCompanyCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ClientCompanyCategory $clientCate)
+    public function destroy(ClientCompanyCategory $client_company_category)
     {
-        $this->service->delete($clientCate);
+        $this->service->delete($client_company_category);
         return response()->noContent();
     }
 }
