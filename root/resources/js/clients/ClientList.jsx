@@ -1,11 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import ClientPdfDownload from "./ClientPdfDownload";
 
 function ClientList({ clients, onEdit, onDelete }) {
+
     return (
         <div>
             <h2>クライアント一覧</h2>
             <p>社名をクリックして詳細を表示</p>
+            <ClientPdfDownload />
             <table border="1">
                 <thead>
                     <tr>

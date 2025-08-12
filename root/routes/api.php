@@ -8,6 +8,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CompanyCategoryController;
 use App\Http\Controllers\PersonController;
 use App\Models\ClientCompanyCategory;
+use App\Http\Controllers\Api\PdfJobController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,3 +31,7 @@ Route::apiResource('clients', ClientController::class);
 Route::apiResource('company_categories', CompanyCategoryController::class);
 Route::apiResource('client_company_categories', ClientCompanyCategoryController::class);
 Route::apiResource('persons', PersonController::class);
+
+//PDF生成関連
+Route::post('/pdf-job-start', [PdfJobController::class, 'start']);
+Route::get('/pdf-job/progress/{id}', [PdfJobController::class, 'progress']);
