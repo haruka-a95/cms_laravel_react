@@ -75,4 +75,4 @@ React は Laravel に統合されており、`resources/js/app.jsx` がエント
 `php artisan test`
 
 ## その他
-- [PDF出力機能について](cms_laravel_react/docs/PDF出力機能.md)
+- [PDF出力機能について](https://github.com/haruka-a95/cms_laravel_react/blob/main/docs/PDF%E5%87%BA%E5%8A%9B%E6%A9%9F%E8%83%BD.md)
