@@ -7,6 +7,7 @@ import Person from './clients/persons/Person';
 import Client from './clients/Client';
 import ClientDetail from './clients/ClientDetail';
 import Navigation from './components/Navigation';
+import ClientCsvUpload from './clients/ClientCsvUpload';
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
                 <Route path="/persons" element={<Person />} />
                 <Route path='/clients/:id' element={<ClientDetail />} />
                 <Route path="/" element={<h1>ホーム</h1>} />
+                <Route path='/clients/import' element={<ClientCsvUpload />} />
             </Routes>
             </BrowserRouter>
     );

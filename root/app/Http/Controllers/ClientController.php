@@ -7,9 +7,19 @@ use App\Models\Client;
 use App\Models\ClientCompanyCategory;
 use Illuminate\Support\Facades\DB;
 use App\Enums\ClientStatus;
+use League\Csv\Reader;
+use App\Services\ClientImportService;
 
 class ClientController extends Controller
 {
+
+    protected $service;
+
+    public function __construct(ClientImportService $service)
+    {
+        $this->service = $service;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -186,5 +196,37 @@ class ClientController extends Controller
     {
         $client->delete();
         return response()->noContent();
+    }
+
+    /**
+     * アップロードしたcsvファイルを確認
+     */
+    public function preview(Request $request)
+    {
+        $request->validate([
+            'csv' => 'required|file|mimes:csv,txt',
+        ]);
+
+        $records = $this->service->parseCsv($request->file('csv'));
+
+        return response()->json([
+            'data' => $records,
+            'count' => count($records)
+        ]);
+    }
+    /** インポートした内容をDB登録 */
+    public function importConfirmed(Request $request)
+    {
+        $request->validate([
+            'data' => 'required|array',
+        ]);
+
+       $result = $this->service->import($request->input('data'));
+
+        return response()->json([
+            'message' => 'CSVをインポートしました',
+            'inserted_count' => $result['inserted_count'],
+            'skipped' => $result['skipped'],
+        ]);
     }
 }

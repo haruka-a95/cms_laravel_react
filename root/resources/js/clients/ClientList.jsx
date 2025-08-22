@@ -6,7 +6,7 @@ function ClientList({ clients, onEdit, onDelete }) {
 
     return (
         <div>
-            <h2>クライアント一覧</h2>
+            <h2 className="bold text-center text-2xl">クライアント一覧</h2>
             <p>社名をクリックして詳細を表示</p>
             <ClientPdfDownload />
             <table border="1">

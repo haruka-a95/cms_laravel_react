@@ -12,12 +12,13 @@ const STATUS_OPTIONS = [
   { value: "closed", label: "取引終了" },
 ];
 
-export default function ClientSearch({ onResults }) {
+export default function ClientSearch({ onResults, showToggleButton = false }) {
   const [status, setStatus] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [companyName, setCompanyName] = useState("");
   const [personName, setPersonName] = useState("");
+  const [showForm, setShowForm] = useState(false);
 
   //カテゴリをAPIで取得
   useEffect(() => {
@@ -64,7 +65,19 @@ export default function ClientSearch({ onResults }) {
   };
 
   return (
-    <div className="bg-sky-100">
+    <div className="bg-sky-100 p-4 rounded my-2">
+      {/* 表示・非表示ボタン */}
+      {showToggleButton && (
+        <div>
+          <Button variant="primary" type="button" onClick={() => setShowForm((prev) => !prev)}>
+            {showForm ? "検索フォームを非表示" : "検索フォームを表示"}
+          </Button>
+        </div>
+      )}
+
+      {/* 検索フォーム */}
+      {showForm && (
+        <>
         <h2>検索フォーム</h2>
         <form onSubmit={handleSearch} className="mb-4 border p-4 rounded shadow-sm">
         <CheckboxGroup
@@ -102,6 +115,8 @@ export default function ClientSearch({ onResults }) {
         <Button variant="primary" type="submit">検索</Button>
         <Button variant="secondary" type="button" onClick={handleReset}>リセット</Button>
         </form>
+        </>
+        )}
     </div>
   );
 }
