@@ -39,7 +39,7 @@ Route::get('/pdf-job/progress/{id}', [PdfJobController::class, 'progress']);
 //CSVインポートして登録
 Route::prefix('clients/import')->group(function(){
     //CSVプレビュー
-    Route::post('preview', [ClientController::class, 'preview']);
+    Route::post('/preview', [ClientController::class, 'preview']);
     //CSV登録
     Route::post('/register', [ClientController::class, 'importConfirmed']);
 });

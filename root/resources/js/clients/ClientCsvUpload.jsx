@@ -8,6 +8,7 @@ export default function ClientCsvUpload(){
     const [error, setError] = useState("");
     const [previewData, setPreviewData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [errorsArr, setErrorsArr] = useState([]);
 
     //CSVアップロード
     const handleFileChange = (e) => {
@@ -23,6 +24,7 @@ export default function ClientCsvUpload(){
 
         setLoading(true);
         setMessage("");
+        setError("");
 
         try {
             const formData = new FormData();
@@ -32,9 +34,17 @@ export default function ClientCsvUpload(){
                 headers: { "Content-Type": "multipart/form-data"},
             });
 
-            setPreviewData(res.data.data || []);
-            setMessage(res.data.message || "読み込み成功");
-            setError("");
+            const data = res.data.records || [];
+            const warnings = res.data.warnings || [];
+            const errorsArr = res.data.errors || [];
+
+            setPreviewData(data);
+
+            setErrorsArr(errorsArr);
+            setMessage(warnings.length ? "警告: " + warnings.join(", ") : "読み込み成功");
+            setError(errorsArr.length ? errorsArr.join(", ") : "");
+            console.log(data);
+
         } catch (error) {
             setError(error.response?.data?.message || "読み込み失敗");
             setMessage("");
@@ -90,7 +100,7 @@ export default function ClientCsvUpload(){
         {/* プレビュー表示 */}
             {previewData.length > 0 && (
                 <div className="mt-4 overflow-x-auto">
-                    {error && (<p>登録をスキップした行は以下の通りです。</p>)}
+                    {error && (<p>登録エラーの行は以下の通りです。</p>)}
                     <table>
                         <thead>
                         <tr>
@@ -100,13 +110,16 @@ export default function ClientCsvUpload(){
                         </tr>
                         </thead>
                         <tbody>
-                        {previewData.map((row, idx) => (
-                            <tr key={idx}>
+                        {previewData.map((row, idx) =>{
+                            const errorRow = errorsArr.includes(`${idx +2}行目: 会社名が空`);
+                            return(
+                            <tr key={idx} className={errorRow ? "bg-red-100" : ""}>
                             {Object.values(row).map((val, i) => (
                                 <td key={i}>{val}</td>
                             ))}
                             </tr>
-                        ))}
+                        );
+                        })}
                         </tbody>
                     </table>
                 </div>

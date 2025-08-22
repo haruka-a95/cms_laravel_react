@@ -209,11 +209,9 @@ class ClientController extends Controller
 
         $records = $this->service->parseCsv($request->file('csv'));
 
-        return response()->json([
-            'data' => $records,
-            'count' => count($records)
-        ]);
+        return response()->json($records);
     }
+
     /** インポートした内容をDB登録 */
     public function importConfirmed(Request $request)
     {

@@ -10,8 +10,8 @@ use Exception;
 
 class ClientImportService
 {
-    // 必須ヘッダー
-    private array $expectedHeaders = [
+    // 許容ヘッダーリスト
+    private array $allowedHeaders = [
         'company_name',
         'company_category',
         'contact_person_id',
@@ -34,13 +34,32 @@ class ClientImportService
         $csv->setHeaderOffset(0); // 1行目をヘッダーに設定
 
         $headers = $csv->getHeader();
-        $missing = array_diff($this->expectedHeaders, $headers);
 
-        if (!empty($missing)) {
-            throw new Exception("CSVヘッダーが不正です。欠けているカラム: " . implode(',', $missing));
+        //許容していないヘッダーがある場合、警告表示
+        $extraHeaders = array_diff($headers, $this->allowedHeaders);
+        $warnings = [];
+        if (!empty($extraHeaders)) {
+            $warnings[] = '未定義のヘッダーが含まれています: ' . implode(",", $extraHeaders);
         }
 
-        return iterator_to_array($csv->getRecords(), false);
+        $records = [];
+        $errors = [];
+
+        foreach ($csv->getRecords() as $idx => $record) {
+            $rowNumber = $idx + 2;
+            $records[] = $record;
+
+            //社名がなければエラー
+            if (empty(trim($record['company_name'] ?? ''))) {
+                $errors[] = "{$rowNumber}行目の会社名が空です。";
+            }
+        }
+
+        return [
+            'warnings' => $warnings,
+            'errors' => $errors,
+            'records' => $records,
+        ];
     }
 
     /**
@@ -62,17 +81,17 @@ class ClientImportService
         DB::transaction(function () use ($records, &$skipped, &$insertedCount) {
             foreach (array_chunk($records, 1000) as $chunk) {
                 foreach ($chunk as $record) {
-                    $email = trim($record['email'] ?? '');
-                    if ($email === '') {
+                    $company = trim($record['company_name'] ?? '');
+                    if ($company === '') {
                         $skipped[] = $record;
                         continue;
                     }
 
                     // クライアント作成 or 更新
                     $client = Client::updateOrCreate(
-                        ['email' => $email],
+                        ['company_name' => $company],
                         [
-                            'company_name' => $record['company_name'] ?? null,
+                            'email' => $record['email'] ?? null,
                             'contact_person_id' => $record['contact_person_id'] ?? null,
                             'phone' => $record['phone'] ?? null,
                             'address' => $record['address'] ?? null,
