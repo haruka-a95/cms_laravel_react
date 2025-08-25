@@ -31,6 +31,7 @@ export default function  ClientForm({ onSubmit, editingClient, showToggleButton 
     //フォーム初期化
     useEffect(() => {
         if (editingClient) {
+            setShowForm(true);
             setForm({
                 ...editingClient,
                 company_category_ids: editingClient.categories ? editingClient.categories.map(c => c.id) : [],

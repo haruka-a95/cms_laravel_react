@@ -75,7 +75,7 @@ function Client() {
             {message && <div style={{ color: "green" }}>{message}</div>}
             {error && <div style={{ color: "red" }}>{error}</div>}
 
-                {/* 追加フォーム */}
+                {/* 追加・編集フォーム */}
                 <ClientForm
                     onSubmit={handleSave}
                     editingClient={editingClient}
