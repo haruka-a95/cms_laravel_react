@@ -92,20 +92,20 @@ export default function  ClientForm({ onSubmit, editingClient, showToggleButton 
     };
 
     return (
-        <div className="container">
+        <div className="text-center">
             {/* 表示・非表示ボタン */}
             {showToggleButton && (
                 <div className="text-right">
                     <Button variant="primary" type="button" onClick={() => setShowForm((prev) => !prev)}>
-                        {showForm ? "フォームを非表示" : "フォームを表示"}
+                        {showForm ? "－" : "＋"}
                     </Button>
                 </div>
             )}
 
             {showForm && (
-                <form onSubmit={handleSubmit}>
-                <h2 className="text-center text-lg">{editingClient ? "クライアント編集" : "新規クライアント追加"}</h2>
-                    <div className="grid gap-4 grid-col-3">
+                <form onSubmit={handleSubmit} className="bg-sky-50 p-3 my-2 max-w-3xl mx-auto rounded shadow">
+                    <h2 className="text-center text-lg underline">{editingClient ? "クライアント編集" : "新規クライアント追加"}</h2>
+                    <div className="grid grid-cols-2 gap-2 mb-3">
                         {/* ステータス選択 */}
                         <SelectField
                             label="ステータス"
@@ -158,19 +158,23 @@ export default function  ClientForm({ onSubmit, editingClient, showToggleButton 
                         />
                         {/* 住所 */}
                         {/* 郵便番号 */}
-                        <InputField label="郵便番号"
+                        <div className="flex gap-2 col-span-2 w-full max-w-xl mx-auto">
+                            <InputField label="郵便番号"
                                     name="zipcode"
                                     value={zipcode}
                                     onChange={(e) => setZipcode(e.target.value)}
-                                    placeholder="例: 1000001" />
-                        <Button variant="secondary" type="button" onClick={handleZipSearch}>住所検索</Button>
-                        <InputField
-                            label="住所"
-                            name="address"
-                            value={form.address}
-                            onChange={handleChange}
-                            placeholder="住所"
-                        />
+                                    placeholder="例: 1000001"
+                                    className="flex-1" />
+                            <Button variant="secondary" type="button" onClick={handleZipSearch}>住所検索</Button>
+                            <InputField
+                                label="住所"
+                                name="address"
+                                value={form.address}
+                                onChange={handleChange}
+                                placeholder="住所"
+                                className="flex-2"
+                            />
+                        </div>
                     </div>
                     <Button variant="primary" type="submit">{editingClient ? "更新" : "追加"}</Button>
                 </form>

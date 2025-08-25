@@ -1,9 +1,9 @@
 import React from "react";
 
-export default function MultiSelectField({ label, name, values, options, onChange }) {
+export default function MultiSelectField({ label, name, values, options, onChange, br=false }) {
     return (
-        <div>
-            <label>{label}</label><br />
+        <div className="flex gap-2 items-center">
+            <label>{label}</label>{br && <br />}
             <select
                 name={name}
                 multiple

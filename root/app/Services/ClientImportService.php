@@ -44,20 +44,35 @@ class ClientImportService
 
         $records = [];
         $errors = [];
+        $valid_records = [];
 
         foreach ($csv->getRecords() as $idx => $record) {
             $rowNumber = $idx + 2;
-            $records[] = $record;
+            $records[] = array_merge(['__row_number' => $rowNumber], $record);//行番号と内容を格納
 
-            //社名がなければエラー
-            if (empty(trim($record['company_name'] ?? ''))) {
+            $companyName = trim($record['company_name'] ?? '');
+            $categoryName = trim($record['company_category'] ?? '');
+
+            //社名が空の場合エラー
+            if ($companyName === '') {
                 $errors[] = "{$rowNumber}行目の会社名が空です。";
+                continue;
             }
+
+            //指定されているカテゴリの存在チェック
+            if ($categoryName !== '' && !\App\Models\CompanyCategory::where('name', $categoryName)->exists()) {
+                $errors[] = "{$rowNumber}行目: 未登録カテゴリ {$categoryName}";
+                continue;
+            }
+
+            //正常な行はvalid_recordsへ
+            $valid_records[] = $record;
         }
 
         return [
             'warnings' => $warnings,
             'errors' => $errors,
+            'valid_records' => $valid_records,
             'records' => $records,
         ];
     }

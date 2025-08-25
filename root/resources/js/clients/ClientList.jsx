@@ -1,15 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import ClientPdfDownload from "./ClientPdfDownload";
+import Button from "../components/Button";
 
 function ClientList({ clients, onEdit, onDelete }) {
 
     return (
         <div>
             <h2 className="bold text-center text-2xl">クライアント一覧</h2>
-            <p>社名をクリックして詳細を表示</p>
+            <p className="text-center">社名をクリックして詳細を表示</p>
             <ClientPdfDownload />
-            <table border="1">
+            <table border="1" className="mx-auto">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -40,8 +41,8 @@ function ClientList({ clients, onEdit, onDelete }) {
                                 <td>{c.email}</td>
                                 <td>{c.address}</td>
                                 <td>
-                                    <button onClick={() => onEdit(c)}>編集</button>
-                                    <button onClick={() => onDelete(c.id)}>削除</button>
+                                    <Button variant="primary" type="button" onClick={() => onEdit(c)}>編集</Button>
+                                    <Button variant="danger" type="button" onClick={() => onDelete(c.id)}>削除</Button>
                                 </td>
                                 <td>{c.status_label}</td>
                             </tr>

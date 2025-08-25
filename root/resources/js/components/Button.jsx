@@ -24,6 +24,8 @@ export default function Button({
       "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 disabled:bg-blue-300",
     secondary:
       "bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-400 disabled:bg-gray-100",
+    dark:
+      "bg-blue-900 text-white hover:bg-blue-950 focus:ring-blue-800 disabled:bg-blue-600",
     danger:
       "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 disabled:bg-red-300",
     outline:

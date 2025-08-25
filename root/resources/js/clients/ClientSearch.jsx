@@ -65,57 +65,56 @@ export default function ClientSearch({ onResults, showToggleButton = false }) {
   };
 
   return (
-    <div className="bg-sky-100 p-4 rounded my-2">
+    <div className="my-2">
       {/* 表示・非表示ボタン */}
       {showToggleButton && (
-        <div>
-          <Button variant="primary" type="button" onClick={() => setShowForm((prev) => !prev)}>
-            {showForm ? "検索フォームを非表示" : "検索フォームを表示"}
+        <div className="text-right mb-2">
+          <Button variant="dark" type="button" onClick={() => setShowForm((prev) => !prev)}>
+            {showForm ? "－検索フォーム" : "＋検索フォームを表示"}
           </Button>
         </div>
       )}
 
       {/* 検索フォーム */}
       {showForm && (
-        <>
-        <h2>検索フォーム</h2>
-        <form onSubmit={handleSearch} className="mb-4 border p-4 rounded shadow-sm">
-        <CheckboxGroup
-            label="ステータス"
-            options={STATUS_OPTIONS}
-            selected={status}
-            onToggle={(v) => setStatus(prev =>
-            prev.includes(v) ? prev.filter(x => x !== v) : [...prev, v]
-            )}
-        />
+        <div className="bg-blue-50  p-3 my-2 max-w-3xl mx-auto rounded shadow">
+          <h2 className="text-center underline text-lg">検索フォーム</h2>
+          <form onSubmit={handleSearch} className="mb-4 p-4 flex flex-col gap-3 align-center mx-auto">
+            <CheckboxGroup
+                label="ステータス"
+                options={STATUS_OPTIONS}
+                selected={status}
+                onToggle={(v) => setStatus(prev =>
+                prev.includes(v) ? prev.filter(x => x !== v) : [...prev, v]
+                )}
+            />
 
-        <CheckboxGroup
-            label="カテゴリ"
-            options={categories.map(c => ({ id: c.id, name: c.name }))}
-            selected={selectedCategories}
-            onToggle={(id) => setSelectedCategories(prev =>
-            prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-            )}
-        />
+            <CheckboxGroup
+                label="カテゴリ"
+                options={categories.map(c => ({ id: c.id, name: c.name }))}
+                selected={selectedCategories}
+                onToggle={(id) => setSelectedCategories(prev =>
+                prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+                )}
+            />
 
-        <InputField
-            label="会社名"
-            type="text"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-        />
+            <InputField
+                label="会社名"
+                type="text"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+            />
 
-        <InputField
-            label="担当者名"
-            type="text"
-            value={personName}
-            onChange={(e) => setPersonName(e.target.value)}
-        />
-
-        <Button variant="primary" type="submit">検索</Button>
-        <Button variant="secondary" type="button" onClick={handleReset}>リセット</Button>
-        </form>
-        </>
+            <InputField
+                label="担当者名"
+                type="text"
+                value={personName}
+                onChange={(e) => setPersonName(e.target.value)}
+            />
+              <Button variant="dark" type="submit" className="w-auto">検索</Button>
+              <Button variant="secondary" type="button" onClick={handleReset} className="w-auto">リセット</Button>
+          </form>
+        </div>
         )}
     </div>
   );

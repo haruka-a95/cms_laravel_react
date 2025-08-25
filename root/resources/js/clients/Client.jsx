@@ -75,7 +75,6 @@ function Client() {
             {message && <div style={{ color: "green" }}>{message}</div>}
             {error && <div style={{ color: "red" }}>{error}</div>}
 
-            <div className="flex gap-2 mb-2 flex-end">
                 {/* 追加フォーム */}
                 <ClientForm
                     onSubmit={handleSave}
@@ -85,7 +84,6 @@ function Client() {
 
                 {/* 検索フォーム */}
                 <ClientSearch onResults={handleSearchResults} showToggleButton={true}/>
-            </div>
             {/* 一覧 */}
             <ClientList
                 clients={clients}

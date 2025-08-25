@@ -14,8 +14,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 // すべての未定義ルートをReactのエントリーポイントにリダイレクト
-// Route::view('/{any}', 'app')->where('any', '.*');
-
-Route::get('/', function () {
+Route::get('/{any}', function () {
     return view('welcome');
-});
+})->where('any', '.*');
