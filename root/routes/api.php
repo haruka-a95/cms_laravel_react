@@ -35,3 +35,11 @@ Route::apiResource('persons', PersonController::class);
 //PDF生成関連
 Route::post('/pdf-job-start', [PdfJobController::class, 'start']);
 Route::get('/pdf-job/progress/{id}', [PdfJobController::class, 'progress']);
+
+//CSVインポートして登録
+Route::prefix('clients/import')->group(function(){
+    //CSVプレビュー
+    Route::post('/preview', [ClientController::class, 'preview']);
+    //CSV登録
+    Route::post('/register', [ClientController::class, 'importConfirmed']);
+});

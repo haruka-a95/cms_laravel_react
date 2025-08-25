@@ -71,16 +71,19 @@ function Client() {
 
     return (
         <div>
-            <h1>クライアント管理</h1>
+            <h1 className="font-bold text-xl">クライアント管理</h1>
             {message && <div style={{ color: "green" }}>{message}</div>}
             {error && <div style={{ color: "red" }}>{error}</div>}
-            {/* 追加フォーム */}
-            <ClientForm
-                onSubmit={handleSave}
-                editingClient={editingClient}
-            />
-            {/* 検索フォーム */}
-            <ClientSearch onResults={handleSearchResults}/>
+
+                {/* 追加・編集フォーム */}
+                <ClientForm
+                    onSubmit={handleSave}
+                    editingClient={editingClient}
+                    showToggleButton={true}
+                />
+
+                {/* 検索フォーム */}
+                <ClientSearch onResults={handleSearchResults} showToggleButton={true}/>
             {/* 一覧 */}
             <ClientList
                 clients={clients}
